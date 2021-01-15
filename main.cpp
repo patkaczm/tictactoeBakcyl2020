@@ -32,7 +32,7 @@ void print(const Board& board)
 }
 
 Move getPlayerMove() {
-    Move move;
+    Move move{};
     std::cout << "What is your move?\n";
     std::cout << "Row: ";
     std::cin >> move.x;
@@ -42,11 +42,12 @@ Move getPlayerMove() {
 }
 
 bool isMoveValid(const Move& move, const Board& board) {
-    try {
-        return board.at(move.x).at(move.y) == ' ';
-    } catch (const std::out_of_range&) {
-        return false;
+    if (move.x >= 0 && move.x < board.size() &&
+        move.y >= 0 && move.y < board.size() &&
+        board[move.x][move.y] == ' ') {
+        return true;
     }
+    return false;
 }
 
 void makeMove(const Move& move, Board& board, const Player player) {
@@ -64,38 +65,14 @@ Player switchPlayers(const Player player)
     return p1;
 }
 
-bool isWinAtRow(const Board& board, uint row)
-{
-    bool isWin = true;
-    for (int i = 0; i < board.size() - 1; i++) {
-        isWin &= board.at(row)[i] != ' ' && board.at(row)[i] == board.at(row)[i + 1];
-        if (not isWin) {
-            break;
-        }
-    }
-    return isWin;
-}
-
-bool isWinAtCol(const Board& board, uint col)
-{
-    bool isWin = true;
-    for (int i = 0; i < board.size() - 1; i++) {
-        isWin &= board[i].at(col) != ' ' && board[i].at(col) == board[i + 1].at(col);
-        if (not isWin) {
-            break;
-        }
-    }
-    return isWin;
-}
-
 bool isGameEnd(const Board& board) {
-    return isWinAtRow(board, 0) ||
-           isWinAtRow(board, 1) ||
-           isWinAtRow(board, 2) ||
+    return board[0][0] != ' ' && board[0][0] == board [0][1] && board [0][1] == board[0][2] ||
+           board[1][0] != ' ' && board[1][0] == board [1][1] && board [1][1] == board[1][2] ||
+           board[2][0] != ' ' && board[2][0] == board [2][1] && board [2][1] == board[2][2] ||
 
-           isWinAtCol(board, 0) ||
-           isWinAtCol(board, 1) ||
-           isWinAtCol(board, 2) ||
+           board[0][0] != ' ' && board[0][0] == board [1][0] && board [1][0] == board[2][0] ||
+           board[0][1] != ' ' && board[0][1] == board [1][1] && board [1][1] == board[2][1] ||
+           board[0][2] != ' ' && board[0][2] == board [1][2] && board [1][2] == board[2][2] ||
 
            board[0][0] != ' ' && board[0][0] == board [1][1] && board [1][1] == board[2][2] ||
            board[0][2] != ' ' && board[0][2] == board [1][1] && board [1][1] == board[2][0];
